@@ -4,6 +4,7 @@ except ImportError:
     import configparser as ConfigParser # py3k support
 import requests
 import time
+from urlparse import urljoin
 
 headers = {
     'Content-type': 'application/x-www-form-urlencoded',
@@ -20,19 +21,22 @@ class RequestException(Exception):
 
 
 class WhatAPI:
-    def __init__(self, config_file=None, username=None, password=None, cookies=None):
+    def __init__(self, config_file=None, username=None, password=None, baseurl=None, cookies=None):
         self.session = requests.Session()
         self.session.headers = headers
         self.authkey = None
         self.passkey = None
+        self.baseurl = None
         if config_file:
             config = ConfigParser()
             config.read(config_file)
             self.username = config.get('login', 'username')
             self.password = config.get('login', 'password')
+            self.baseurl = config.get('login', 'baseurl')
         else:
             self.username = username
             self.password = password
+            self.baseurl = baseurl
         if cookies:
             self.session.cookies = cookies
             try:
@@ -41,6 +45,8 @@ class WhatAPI:
                 self._login()
         else:
             self._login()
+        if not self.baseurl:
+            self.baseurl = 'https://passtheheadphones.me'
 
     def _auth(self):
         '''Gets auth key from server'''
@@ -50,7 +56,7 @@ class WhatAPI:
 
     def _login(self):
         '''Logs in user'''
-        loginpage = 'https://ssl.what.cd/login.php'
+        loginpage = urljoin(self.baseurl, 'login.php')
         data = {'username': self.username,
                 'password': self.password,
                 'keeplogged': 1,
@@ -63,7 +69,7 @@ class WhatAPI:
 
     def get_torrent(self, torrent_id):
         '''Downloads the torrent at torrent_id using the authkey and passkey'''
-        torrentpage = 'https://ssl.what.cd/torrents.php'
+        torrentpage = urljoin(self.baseurl, 'torrents.php')
         params = {'action': 'download', 'id': torrent_id}
         if self.authkey:
             params['authkey'] = self.authkey
@@ -76,13 +82,13 @@ class WhatAPI:
 
     def logout(self):
         '''Logs out user'''
-        logoutpage = 'https://ssl.what.cd/logout.php'
+        logoutpage = urljoin(self.baseurl, 'logout.php')
         params = {'auth': self.authkey}
         self.session.get(logoutpage, params=params, allow_redirects=False)
 
     def request(self, action, **kwargs):
         '''Makes an AJAX request at a given action page'''
-        ajaxpage = 'https://ssl.what.cd/ajax.php'
+        ajaxpage = urljoin(self.baseurl, 'ajax.php')
         params = {'action': action}
         if self.authkey:
             params['auth'] = self.authkey

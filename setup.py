@@ -8,15 +8,15 @@ with open('LICENSE') as f:
 
 setup(
     name='whatapi',
-    version='0.1.1',
+    version='0.2.0',
     description='What.cd API',
     long_description=readme,
-    author='Isaac Zafuta',
-    author_email='isaac@zafuta.com',
-    url='https://github.com/isaaczafuta/whatapi',
+    author='Matt Hazinski',
+    author_email='matt@hazinski.net',
+    url='https://github.com/matthazinski/whatapi',
     license=license,
     install_requires = [
-        "requests"
+        "requests",
     ],
     packages=find_packages(exclude=('tests', 'docs')),
     package_data = {

@@ -1,14 +1,14 @@
 whatapi
 =======
 
-This project is a simple wrapper around the What.cd AJAX API.
+This project is a simple wrapper around the What.cd AJAX API. It should work with any Gazelle-based tracker, assuming their API is enabled.
 
 Example usage:
 
 ::
 
     >>> import whatapi
-    >>> apihandle = whatapi.WhatAPI(username='me', password='secret')
+    >>> apihandle = whatapi.WhatAPI(username='me', password='secret', baseurl='https://apollo.rip')
     >>> apihandle.request("browse", searchstr="Talulah Gosh")
     ...
     >>> apihandle.get_torrent(1234567)
