@@ -4,7 +4,11 @@ except ImportError:
     import configparser as ConfigParser # py3k support
 import requests
 import time
-from urlparse import urljoin
+
+try:
+    from urlparse import urljoin
+except ImportError:
+    from urllib.parse import urljoin
 
 headers = {
     'Content-type': 'application/x-www-form-urlencoded',
