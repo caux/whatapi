@@ -158,7 +158,7 @@ class RequestException(Exception):
     pass
 
 class WhatAPI:
-    def __init__(self, username=None, password=None, baseurl='https://passtheheadphones.me/'):
+    def __init__(self, username=None, password=None, baseurl='https://passtheheadphones.me/', cookies=None):
         self.session = requests.Session()
         self.session.headers.update(headers)
         self.username = username
@@ -169,7 +169,14 @@ class WhatAPI:
         self.userid = None
         self.last_request = time.time()
         self.rate_limit = 2.0 # seconds between requests
-        self._login()
+        if cookies:
+            self.session.cookies = cookies
+            try:
+                self._auth()
+            except RequestException:
+                self._login()
+        else:
+            self._login()
 
     def _login(self):
         '''Logs in user and gets authkey from server'''
