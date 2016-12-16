@@ -178,6 +178,13 @@ class WhatAPI:
         else:
             self._login()
 
+    def _auth(self):
+        '''Gets auth key from server'''
+        accountinfo = self.request('index')
+        self.authkey = accountinfo['authkey']
+        self.passkey = accountinfo['passkey']
+        self.userid = accountinfo['id']
+
     def _login(self):
         '''Logs in user and gets authkey from server'''
         loginpage = '%s/login.php' % self.baseurl
@@ -187,10 +194,7 @@ class WhatAPI:
         if r.status_code != 200:
             raise LoginException
         try:
-            accountinfo = self.request('index')
-            self.authkey = accountinfo['authkey']
-            self.passkey = accountinfo['passkey']
-            self.userid = accountinfo['id']
+            self._auth()
         except:
             print("unable to log in")
             print(r.text)
